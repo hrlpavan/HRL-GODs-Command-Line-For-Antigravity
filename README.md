@@ -1,10 +1,10 @@
-# ⚡ HRL GOD's Command Line For Antigravity
+#  HRL GOD's Command Line For Antigravity
 
 > **High-Performance System Administration, Automation & Storage Management Engine for macOS & Parallels Desktop**
 
 ---
 
-## 📌 Overview
+##  Overview
 
 **HRL GOD's Command Line For Antigravity** is a unified command-line toolkit developed to solve mission-critical storage, performance, and automation bottlenecks on macOS and virtualized Windows environments.
 
