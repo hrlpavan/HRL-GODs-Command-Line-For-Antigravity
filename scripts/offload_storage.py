@@ -2,10 +2,11 @@
 """
 offload_storage.py
 ------------------
-HRL GOD's High-Speed Storage Offload Engine
+HRL GOD's High-Speed Storage Offload Engine (Open Source Edition)
 
 Performs high-speed 16MB chunked file transfers from internal SSD to external storage,
 verifies byte-size matching, and unlinks source files only after successful verification.
+Auto-detects mounted external drives or accepts custom paths.
 """
 
 import argparse
@@ -14,6 +15,20 @@ import sys
 import time
 
 BUF_SIZE = 16 * 1024 * 1024  # 16 MB block size for optimal sequential write
+
+def detect_external_volume():
+    """Detect the first writable external drive under /Volumes (excluding OS volumes)."""
+    volumes_dir = "/Volumes"
+    if not os.path.exists(volumes_dir):
+        return None
+        
+    candidates = []
+    for entry in os.listdir(volumes_dir):
+        full = os.path.join(volumes_dir, entry)
+        if os.path.ismount(full) and not entry.startswith(".") and entry not in ["Macintosh HD", "Recovery"]:
+            candidates.append(full)
+            
+    return candidates[0] if candidates else None
 
 def copy_chunked(src, dst):
     with open(src, 'rb') as fsrc, open(dst, 'wb') as fdst:
@@ -58,12 +73,24 @@ def offload_file(src_path, dst_dir):
         print(f" [!] ERROR: {e}")
         return False
 
-def offload_directory_large_files(src_dir, dst_dir, min_size_mb=100):
+def offload_directory_large_files(src_dir, dst_dir=None, min_size_mb=100):
     src_dir = os.path.expanduser(src_dir)
-    dst_dir = os.path.expanduser(dst_dir)
-    min_bytes = min_size_mb * 1024 * 1024
     
+    if not dst_dir:
+        ext_vol = detect_external_volume()
+        if ext_vol:
+            dst_dir = os.path.join(ext_vol, "Mac_Offloaded_Files", os.path.basename(src_dir))
+            print(f"[+] Auto-detected external volume: {ext_vol}")
+        else:
+            dst_dir = os.path.expanduser("~/Storage_Offload")
+            print("[*] No external drive detected. Falling back to ~/Storage_Offload")
+    else:
+        dst_dir = os.path.expanduser(dst_dir)
+        
+    min_bytes = min_size_mb * 1024 * 1024
     print(f"[*] Scanning {src_dir} for files larger than {min_size_mb} MB...")
+    print(f"[*] Destination: {dst_dir}")
+    
     candidates = []
     for root, _, files in os.walk(src_dir):
         for f in files:
@@ -93,7 +120,7 @@ def offload_directory_large_files(src_dir, dst_dir, min_size_mb=100):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="High-Speed Storage Offload Engine")
     parser.add_argument("--src", default="~/Downloads", help="Source directory (default: ~/Downloads)")
-    parser.add_argument("--dst", default="/Volumes/My Passport/Macintosh_HD_Offloaded_Files/Downloads", help="Target external directory")
+    parser.add_argument("--dst", default=None, help="Target directory (auto-detects external drive if omitted)")
     parser.add_argument("--min-size", type=int, default=100, help="Minimum file size in MB (default: 100)")
     
     args = parser.parse_args()

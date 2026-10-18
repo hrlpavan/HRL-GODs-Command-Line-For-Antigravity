@@ -2,16 +2,30 @@
 #
 # archive_davinci_cache.sh
 # ------------------------
-# Streams DaVinci Resolve render cache directory into a single sequential tar archive
-# on an external drive, bypassing ExFAT thousands-of-files write bottlenecks.
+# General Streaming Cache Archiver for Media Editors (Open Source Edition)
+#
+# Streams large video render cache directories (DaVinci Resolve, Final Cut Pro, Premiere)
+# into a single sequential tar archive on external storage, bypassing ExFAT thousands-of-files bottlenecks.
 #
 
 set -euo pipefail
 
-SRC_DIR="${1:-$HOME/DaVinci Resolve/FileDaVInci/CacheClip}"
-DST_TAR="${2:-/Volumes/My Passport/Macintosh_HD_Offloaded_Files/DaVinci_Resolve_Cache/CacheClip_backup.tar}"
+# Auto-detect default DaVinci Resolve cache directory if not supplied
+DEFAULT_SRC="$HOME/DaVinci Resolve/FileDaVInci/CacheClip"
+SRC_DIR="${1:-$DEFAULT_SRC}"
 
-echo "[*] DaVinci Resolve Cache Archiver"
+EXT_VOL=$(find /Volumes -maxdepth 1 -mindepth 1 -not -name "Macintosh HD" -not -name "Recovery" -not -name ".*" 2>/dev/null | head -n 1 || echo "")
+if [ -n "$EXT_VOL" ]; then
+    DEFAULT_DST="$EXT_VOL/Media_Cache_Archives/CacheClip_backup.tar"
+else
+    DEFAULT_DST="$HOME/Media_Cache_Archives/CacheClip_backup.tar"
+fi
+
+DST_TAR="${2:-$DEFAULT_DST}"
+
+echo "=================================================="
+echo "      High-Speed Media Render Cache Archiver       "
+echo "=================================================="
 echo "[*] Source: $SRC_DIR"
 echo "[*] Target Archive: $DST_TAR"
 
@@ -20,7 +34,6 @@ if [ ! -d "$SRC_DIR" ]; then
     exit 0
 fi
 
-# Ensure parent directory of destination exists
 mkdir -p "$(dirname "$DST_TAR")"
 
 PARENT_DIR="$(dirname "$SRC_DIR")"
@@ -29,14 +42,14 @@ BASE_NAME="$(basename "$SRC_DIR")"
 echo "[*] Measuring source cache size..."
 du -sh "$SRC_DIR"
 
-echo "[*] Creating streaming sequential tar archive on external drive..."
+echo "[*] Creating streaming sequential tar archive..."
 tar -cf "$DST_TAR" -C "$PARENT_DIR" "$BASE_NAME"
 
 echo "[✓] Archive created successfully:"
 ls -lh "$DST_TAR"
 
-echo "[*] Cleaning local CacheClip directory and recreating empty container..."
+echo "[*] Cleaning local cache directory and recreating clean container..."
 rm -rf "$SRC_DIR"
 mkdir -p "$SRC_DIR"
 
-echo "[✓] DaVinci Resolve cache offloaded successfully. Scratch container ready."
+echo "[✓] Render cache offloaded successfully. Scratch directory initialized."

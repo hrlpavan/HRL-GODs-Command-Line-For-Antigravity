@@ -1,100 +1,140 @@
-#  HRL GOD's Command Line For Antigravity
+# ⚡ HRL GOD's Command Line For Antigravity
 
-> **High-Performance System Administration, Automation & Storage Management Engine for macOS & Parallels Desktop**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![macOS](https://img.shields.io/badge/Platform-macOS%20%7C%20Apple%20Silicon%20%26%20Intel-black.svg?logo=apple)](https://www.apple.com/macos/)
+[![Swift](https://img.shields.io/badge/Language-Swift%20%7C%20Python%203-orange.svg?logo=swift)](https://swift.org)
+[![GitHub](https://img.shields.io/badge/Mirror-GitHub-181717.svg?logo=github)](https://github.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity)
+[![GitLab](https://img.shields.io/badge/Mirror-GitLab-FC6D26.svg?logo=gitlab)](https://gitlab.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity)
 
----
-
-##  Overview
-
-**HRL GOD's Command Line For Antigravity** is a unified command-line toolkit developed to solve mission-critical storage, performance, and automation bottlenecks on macOS and virtualized Windows environments.
-
-Built during high-volume production operations, this suite contains specialized engineering solutions designed to bypass OS-level sync stalls, eliminate duplicate asset clutter, handle dataless cloud stubs, safely migrate live virtual machines, and reclaim tens of gigabytes of internal storage at maximum hardware throughput.
+> **High-Performance System Administration, Storage Reclamation & On-Device Vision AI Toolkit for macOS**
 
 ---
 
-## 🏆 Key Milestones Accomplished
+## 📌 Overview
 
-| Task | Core Problem | Engineering Solution | Impact |
-| :--- | :--- | :--- | :--- |
-| **Task 1: Superfast Screenshot Cleanup** | 1,161+ screenshots clogging Desktop; standard sequential `find -exec mv` blocked on Apple security & CloudKit hooks. | Bypassed filesystem crawl using native Spotlight metadata indexing (`mdfind "kMDItemIsScreenCapture == 1"`) + multi-threaded `ThreadPoolExecutor`. | **1,161 files moved in seconds**; 100% recoverable in Trash & backup. |
-| **Task 2: Native Dataless Screen Recording Cleanup** | Heavy screen recordings (multi-hundred MB) flagged `compressed,dataless` (iCloud stubs) hung Unix `mv`/`cp` by triggering full network downloads. | Utilized Apple's native Swift Foundation API (`FileManager.default.trashItem`) to command CloudKit to trash files directly in the cloud without downloading bytes. | **Cleared Desktop recordings in ~2 seconds** without network transfer; preserved project files. |
-| **Task 3: Live VM Migration & Storage Offload** | Internal SSD dangerously full (92% capacity, 18 GB free); 20 GB Windows 11 VM and 28+ GB of ISOs & render cache hogging space. | Automated Parallels CLI (`prlctl`) for clean suspension, cross-drive relocation, re-registration, and live resumption; paired with 16MB chunked transfer & streaming `.tar` archives. | **+46 GB SSD space reclaimed**; Windows VM now runs smoothly off *My Passport*. |
+**HRL GOD's Command Line For Antigravity** is a production-grade, open-source command-line toolkit developed for macOS power users, software engineers, and digital creators.
+
+It provides high-performance solutions for common macOS performance and storage bottlenecks:
+- **Zero Cloud Transmission:** Uses on-device Apple Neural Engine OCR (Apple Vision framework) to categorize and clean up thousands of screenshots into structured **Important** vs. **Trash** documents.
+- **Instant Spotlight Discovery:** Bypasses slow POSIX directory crawls using CoreServices metadata indexing (`mdfind`) and multi-threaded APFS batch relocation.
+- **Native iCloud Dataless Handling:** Uses Apple Foundation APIs (`FileManager.default.trashItem`) to trash offloaded iCloud files without downloading gigabytes of cloud stubs over the network.
+- **High-Speed Storage Offload:** 16MB chunked buffered file transfers and streaming `.tar` archives optimized for external ExFAT and APFS drives.
+- **Parallels Desktop VM Relocation:** Automated CLI suspension, migration, and resumption of live virtual machines across drives without data loss.
 
 ---
 
-## 📂 Repository Architecture
+## 🚀 Quick Install
+
+### One-Line Install (macOS Monterey, Ventura, Sonoma, Sequoia):
+```bash
+git clone https://github.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity.git ~/.hrl-god-repo
+~/.hrl-god-repo/install.sh
+```
+
+---
+
+## 🛠️ CLI Usage & Command Reference
+
+Run `hrl-god` in your terminal to launch the interactive dashboard, or pass commands directly:
+
+### 1. Vision AI Content-Aware Screenshot Organizer
+Extracts on-device text from every screenshot using Apple's Neural Engine Vision framework and automatically sorts them into structured categories:
+```bash
+# Organize ~/Desktop screenshots into ~/Organized_Screenshots
+hrl-god organize
+
+# Specify custom source and target paths
+hrl-god organize --src ~/Downloads --dest ~/My_Organized_Screenshots
+```
+**Categories Generated:**
+- `Important_Documents/Academic_and_Study/` (Exams, syllabus, algorithms, lectures)
+- `Important_Documents/Finance_and_Receipts/` (UPI, payments, invoices, bills)
+- `Important_Documents/Code_and_Technical/` (Git, terminal, exceptions, APIs, cloud)
+- `Important_Documents/Official_and_Legal/` (Certificates, credentials, contracts)
+- `Important_Documents/General_Important/` (Dense structured text documents)
+- `Trash_Documents/Memes_and_Social/` (Reels, memes, casual chat screenshots)
+- `Trash_Documents/Low_Content_and_Misc/` (Blank/accidental captures, noise)
+
+---
+
+### 2. High-Speed Spotlight Screenshot Cleaner
+Finds all screenshots in milliseconds using Spotlight metadata and moves them concurrently:
+```bash
+hrl-god screenshots --scope ~/Desktop --dest ~/Screenshots_Removed
+```
+
+---
+
+### 3. Native Dataless Screen Recording Cleaner
+Trashes offloaded iCloud screen recordings (`compressed,dataless`) without triggering multi-gigabyte network downloads:
+```bash
+hrl-god recordings --scope ~/Desktop
+```
+
+---
+
+### 4. High-Speed 16MB Chunked Storage Offload
+Transfers large files (> 100MB) from internal storage to an external drive at maximum hardware throughput with byte-size verification before unlinking:
+```bash
+# Auto-detects connected external drive
+hrl-god storage offload --src ~/Downloads
+
+# Custom destination and size threshold
+hrl-god storage offload --src ~/Downloads --dst /Volumes/MyExternalDrive/Archive --min-size 200
+```
+
+---
+
+### 5. Parallels Desktop VM Live Relocation
+Suspends, relocates, updates virtual hardware XML registries, and resumes virtual machines on external storage:
+```bash
+hrl-god vm status
+hrl-god vm migrate --name "Windows 11" --dst "/Volumes/MyExternalDrive/Parallels"
+```
+
+---
+
+## 📂 Project Architecture
 
 ```text
 HRL-GODs-Command-Line-For-Antigravity/
-├── README.md                               # Project documentation and architectural overview
-├── hrl_god_cli.py                          # Unified CLI entrypoint with subcommands & interactive mode
+├── README.md                               # Project documentation & usage manual
+├── LICENSE                                 # MIT Open Source License
+├── CONTRIBUTING.md                         # Contribution guidelines
+├── install.sh                              # Standalone installer script
+├── hrl_god_cli.py                          # Unified CLI entrypoint with subcommands
 ├── bin/
-│   └── hrl-god                             # Global terminal executable wrapper
+│   └── hrl-god                             # Terminal binary wrapper
 ├── scripts/
-│   ├── clean_screenshots.py                # Spotlight-indexed parallel screenshot manager
-│   ├── clean_screen_recordings.swift       # Swift Foundation script for dataless iCloud stubs
-│   ├── offload_storage.py                  # High-speed 16MB chunked file transfer engine
+│   ├── organize_screenshots.swift          # Apple Vision Neural Engine OCR classifier
+│   ├── clean_screenshots.py                # Spotlight-indexed parallel screenshot cleaner
+│   ├── clean_screen_recordings.swift       # Swift Foundation cleaner for dataless iCloud stubs
+│   ├── offload_storage.py                  # High-speed 16MB chunked external transfer engine
 │   ├── archive_davinci_cache.sh            # Streaming tar archiver for ExFAT small-file optimization
-│   └── migrate_parallels_vm.sh             # Automated Parallels Desktop VM migration script
+│   └── migrate_parallels_vm.sh             # Native Parallels CLI live VM migration script
 └── docs/
     ├── TASK_1_SCREENSHOT_CLEANUP.md        # Technical report: Spotlight indexing vs POSIX traversal
-    ├── TASK_2_SCREEN_RECORDING_CLEANUP.md  # Technical report: APFS dataless stubs & Swift Foundation
-    └── TASK_3_VM_MIGRATION_AND_STORAGE_OFFLOAD.md # Technical report: VM relocation & chunked I/O
+    ├── TASK_2_SCREEN_RECORDING_CLEANUP.md  # Technical report: APFS dataless stubs & Swift API
+    ├── TASK_3_VM_MIGRATION_AND_STORAGE_OFFLOAD.md # Technical report: VM relocation & chunked I/O
+    └── TASK_4_CONTENT_AWARE_OCR_CLASSIFICATION.md # Technical report: Vision framework OCR engine
 ```
 
 ---
 
-## 🚀 Unified CLI Usage
-
-Run the unified command line directly:
-
-```bash
-# Launch interactive console
-python3 hrl_god_cli.py
-
-# Or run specific subcommands:
-python3 hrl_god_cli.py screenshots --clean
-python3 hrl_god_cli.py recordings --clean
-python3 hrl_god_cli.py storage --status
-python3 hrl_god_cli.py storage --offload
-python3 hrl_god_cli.py vm --status
-```
+## 📚 Technical Deep Dives
+* [Task 1: Superfast Screenshot Cleanup & Spotlight Metadata Traversal](docs/TASK_1_SCREENSHOT_CLEANUP.md)
+* [Task 2: Native Dataless Screen Recording Cleanup via Swift Foundation](docs/TASK_2_SCREEN_RECORDING_CLEANUP.md)
+* [Task 3: Live Parallels VM Migration & Chunked Storage Offloading](docs/TASK_3_VM_MIGRATION_AND_STORAGE_OFFLOAD.md)
+* [Task 4: Content-Aware Screenshot Classification via Apple Vision OCR](docs/TASK_4_CONTENT_AWARE_OCR_CLASSIFICATION.md)
 
 ---
 
-## 🛠️ Tool Index
+## 🌐 Mirrors & Repository Links
 
-### 1. `scripts/clean_screenshots.py`
-Leverages Apple's indexed metadata database (`kMDItemIsScreenCapture == 1`) to query screen captures in milliseconds. Dispatches file operations across a 32-worker threadpool for instant moves without UI freezing.
-
-### 2. `scripts/clean_screen_recordings.swift`
-Interacts with the macOS APFS FileProvider VFS layer. Unlike standard Unix POSIX `unlink`/`rename` which blocks while downloading offloaded iCloud files, `FileManager.default.trashItem` notifies the system daemon to update the cloud container directly.
-
-### 3. `scripts/offload_storage.py`
-Optimized for external USB drives (ExFAT / APFS). Employs 16 MB chunked streaming to maintain peak sequential write throughput (~31+ MB/s) and performs strict byte-size verification before unlinking source assets.
-
-### 4. `scripts/archive_davinci_cache.sh`
-Solves the ExFAT directory-entry bottleneck when handling tens of thousands of tiny render cache files (`.dvcc` / `.pfl`). Streams files sequentially into a single `.tar` archive, reducing transfer times from 30+ minutes to under 8 minutes.
-
-### 5. `scripts/migrate_parallels_vm.sh`
-Performs clean ACPI/suspend operations, invokes `prlctl move` to relocate `.pvm` bundles across volumes, updates the Parallels virtual hardware registry, and restores the live session.
+* **GitHub:** [https://github.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity](https://github.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity)
+* **GitLab:** [https://gitlab.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity](https://gitlab.com/hrlpavan/HRL-GODs-Command-Line-For-Antigravity)
 
 ---
 
-## 📊 Performance & Storage Impact
-
-```text
-Macintosh HD Capacity Before:   ██████████████████░░ 92% (18 GB free)
-Macintosh HD Capacity After:    █████████████░░░░░░░ 68% (64 GB free)
-
-Total Storage Reclaimed:       +46.0 GB (Internal SSD)
-Files Safely Migrated:          1,161 Screenshots + 6 Screen Recordings + 20 GB VM + 17.4 GB Media + 14 GB Cache
-Zero Data Loss:                 100% verified checksums & recoverable archives
-```
-
----
-
-## 🛡️ Safety Guarantees
-- **No Destructive Overwrites:** All operations check target existence and resolve collisions.
-- **Pre-Deletion Verification:** Source files are never removed until the destination copy has been verified for identical byte size.
-- **Fail-Safe Recoverability:** Files moved from Desktop/Downloads are placed in designated recovery directories or macOS Trash.
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).

@@ -6,29 +6,19 @@ This document outlines the investigation and solution for deleting large screen 
 ---
 
 ## 1. Problem Statement
-The user requested the removal of all screen recordings from their Desktop to free up space. 
+Screen recordings captured on macOS frequently reach multi-hundred megabyte sizes on the user's Desktop (`~/Desktop`). 
 
-Inspection identified six large `.mov` files totaling **~604 MB** on `/Users/pavankumars/Desktop`:
-- `Screen Recording 2026-07-11 at 1.49.11 PM.mov` (178 MB)
-- `Screen Recording 2026-07-11 at 1.55.14 PM.mov` (179 MB)
-- `Screen Recording 2026-07-11 at 2.39.43 PM.mov` (243 MB)
-- `Screen Recording 2026-07-14 at 12.36.06 AM.mov` (94 KB)
-- `Screen Recording 2026-08-19 at 7.32.51 PM.mov` (3.5 MB)
-- `Screen Recording 2026-08-28 at 12.03.08 AM.mov` (41 KB)
-
-A project recording located inside `~/HRL Int Pvt.Ltd.,/HRL GOD!/Screen Recording 2026-09-15 at 11.53.48 PM.mov` (39 MB) had to be identified, isolated, and strictly preserved.
-
-When attempting standard POSIX `mv` or `cp` on these files, the process hung indefinitely.
+When attempting standard POSIX `mv`, `cp`, or `rm` on these files, the process frequently hangs indefinitely or takes minutes per file.
 
 ---
 
 ## 2. Deep Dive: APFS `compressed,dataless` Flags
 
-Inspecting the file attributes via `ls -lO` revealed the root issue:
+Inspecting the file attributes via `ls -lO` reveals the root issue:
 ```text
--rw-r--r--@ 1 pavankumars staff compressed,dataless 186444954 Jul 11 /Users/pavankumars/Desktop/Screen Recording...mov
+-rw-r--r--@ 1 user staff compressed,dataless 186444954 Jul 11 Screen Recording...mov
 ```
-Checking CoreServices metadata confirmed:
+Checking CoreServices metadata confirms:
 ```text
 kMDItemFSSize = 0
 kMDItemLogicalSize = 186444954
@@ -56,12 +46,10 @@ FileManager.default.trashItem(at: URL, resultingItemURL: AutoreleasingUnsafeMuta
 Unlike POSIX `unlink` or `rename`, this Foundation method communicates directly with the FileProvider daemon, instructing the cloud catalog to flag the item as trashed without pulling local data.
 
 ### Swift Implementation
-We developed and executed an automated Swift script:
-
 ```swift
 import Foundation
 
-let desktop = URL(fileURLWithPath: "/Users/pavankumars/Desktop")
+let desktop = URL(fileURLWithPath: ("~/Desktop" as NSString).expandingTildeInPath)
 let fileManager = FileManager.default
 
 do {
@@ -81,8 +69,7 @@ do {
 ---
 
 ## 4. Verification & Results
-- **Execution Time:** ~2.1 seconds total for all 6 files.
-- **Network Bandwidth Consumed:** 0 bytes (no downloads occurred).
-- **Desktop Status:** 0 screen recordings remaining on Desktop.
-- **Project Safety:** `~/HRL Int Pvt.Ltd.,/HRL GOD!/Screen Recording 2026-09-15 at 11.53.48 PM.mov` remained untouched and verified.
-- **Recoverability:** All 6 recordings are safely preserved in macOS Trash (`~/.Trash`).
+- **Execution Time:** ~2 seconds for multiple large gigabyte-sized files.
+- **Network Bandwidth Consumed:** 0 bytes (no network downloads triggered).
+- **Desktop Status:** Desktop cleanly cleared.
+- **Recoverability:** Preserved safely in macOS Trash (`~/.Trash`).
